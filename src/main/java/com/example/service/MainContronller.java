@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.model.Student;
 import com.example.service.StudentService;
@@ -68,7 +69,23 @@ public class MainContronller {
 		model.addAttribute("errorMessage", "Student's information is requied");
 		return "addStudent";
 	}
+	@RequestMapping(value = { "/students" }, method = RequestMethod.GET)
+	public String searchStudent(Model model, @RequestParam (value = "search", required = false) String search) throws IOException {
 
+		AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+		
+		List<Student> listStudents = studentService.searchStudent("%"+ search.trim() +"%");
+		if(listStudents.size()>0)
+		{
+		model.addAttribute("search", listStudents);
+		
+		return "welcome";
+		}
+		
+		String message = "Can't find "+search;
+		model.addAttribute("message",message );			
+		return "welcome";
+	}
 	@RequestMapping(value = { "/deleteStudent/{id}" }, method = RequestMethod.GET)
 	public String deleteStudent(Model model, @PathVariable String id) throws IOException {
 

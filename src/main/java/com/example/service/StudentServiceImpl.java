@@ -35,4 +35,10 @@ public class StudentServiceImpl implements StudentService {
 
 	}
 
+	@Override
+	public List<Student> searchStudent(String text) {
+		
+		return studentMapper.searchStudent(text);
+	}
+
 }

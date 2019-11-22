@@ -19,6 +19,9 @@
      <update id="updateStudent" parameterType="Student" >
       Update Students set Code = #{studentCode}, Name = #{studentName}, [Address] = #{address} WHERE ID = #{studentID};
     </update>
+    <select id ="searchStudent" parameterType= "String" resultMap="result">
+    	SELECT * FROM Students WHERE Name LIKE  #{search} ; 
+    </select>
     
     <resultMap id = "result" type = "Student">
        <result property = "studentID" column = "ID"/>
