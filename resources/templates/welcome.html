@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Person List</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"
+	href="/css/style.css" />
+</head>
+<body>
+	<!--Load Data-->
+	<div class="main">
+		<h1 style="text-align: left; padding-bottom: 20px">View Users</h1>
+		<a id="button" href="addStudent">Add Person</a>
+		<div class="table">
+			<div class="table-row">
+				<div class="table-cell">Code</div>
+				<div class="table-cell">aaaName</div>
+				<div class="table-cell">Address</div>
+				<div class="table-cell"></div>
+			</div>
+
+			<div class="table-row" 
+				th:each="studentForm : ${students}">
+
+				
+				<div class="table-cell" th:utext="${studentForm.studentCode}"></div>
+				<div class="table-cell" th:utext="${studentForm.studentName}"></div>
+				<div class="table-cell" th:utext="${studentForm.address}"></div>
+				<div class="table-cell">
+				
+					<form th:action="@{'/deleteStudent/{id}'(id=${studentForm.studentID})}"  class = "table-row" action="#" th:method="GET">
+						<button  id="button" type="submit">Delete</button>
+						</form>
+						<form th:action="@{'/updateStudent/{id}'(id=${studentForm.studentID})}"  class = "table-row" action="#" th:method="GET">
+						<button id="button" type="submit" >Update</button>
+						</form>
+				
+				</div>
+				
+			</div>
+
+
+		</div>
+	</div>
+
+
+</body>
+</html>
