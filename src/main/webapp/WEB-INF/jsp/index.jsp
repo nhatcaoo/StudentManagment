@@ -22,75 +22,18 @@
 <script type="text/javascript" src="../../jqwidgets/jqxcheckbox.js"></script>
 <script type="text/javascript" src="../../jqwidgets/jqxlistbox.js"></script>
 <script type="text/javascript" src="../../jqwidgets/jqxdropdownlist.js"></script>
+
 <script type="text/javascript" src="../../jqwidgets/jqxgrid.js"></script>
 <script type="text/javascript" src="../../jqwidgets/jqxgrid.sort.js"></script>
 <script type="text/javascript" src="../../jqwidgets/jqxgrid.pager.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxwindow.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxinput.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxgrid.filter.js"></script>
 <script type="text/javascript"
 	src="../../jqwidgets/jqxgrid.selection.js"></script>
 <script type="text/javascript" src="../../jqwidgets/jqxgrid.edit.js"></script>
 <script type="text/javascript" src="../../scripts/demos.js"></script>
-<style>
-#jqxGrid .jqx-grid-column-header {
-	font-weight: bold;
-}
 
-#jqxGrid .jqx-grid-cell {
-	color: rgb(148, 198, 255);
-	font-size: 12px;
-}
-
-.specialtext {
-	color: orange !important;
-}
-
-.description {
-	color: whitesmoke !important;
-}
-
-.sellformat {
-	color: red !important;
-}
-
-.buyformat {
-	color: greenyellow !important;
-}
-
-.booleanvalue {
-	color: mistyrose !important;
-	background-color: aquamarine;
-	pointer-events: none;
-	visibility: hidden;
-}
-
-.quoteonthewire input {
-	background-color: whitesmoke;
-	color: gray !important;
-}
-
-.quoterequested input {
-	background-color: rgb(231, 86, 60);
-	color: white !important;
-}
-
-.jqx-grid-cell {
-	border-color: black !important;
-	border-right: none;
-	border-bottom-width: 2px;
-}
-
-.jqx-grid-cell .jqx-grid-cell-left-align {
-	margin-top: 10px !important;
-}
-
-.jqx-grid-statusbar {
-	background-color: rgb(22, 22, 22) !important;
-}
-
-.jqx-grid-statusbar span {
-	color: rgb(148, 198, 255);
-	font-size: 12px;
-}
-</style>
 <script type="text/javascript">
 	$(document)
 			.ready(
@@ -109,7 +52,18 @@
 								name : 'address',
 								type : 'string'
 							},
-
+							 {
+								name : 'dob',
+								type : 'string'
+							},
+							 {
+								name : 'gender',
+								type : 'boolean'
+							},
+							 {
+								name : 'className',
+								type : 'string'
+							},
 							],
 
 							id : 'studentID',
@@ -135,6 +89,8 @@
 						};
 						var cellsrenderer = function(row, columnfield, value,
 								defaulthtml, columnproperties, rowdata) {
+							
+							//if(value===true) return 'Nam'
 							if (value < 20) {
 								return '<span style="margin: 4px; margin-top:8px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">'
 										+ value + '</span>';
@@ -161,27 +117,31 @@
 							source : dataAdapter,
 							theme : "dark",
 							width : '100%',
-
+							showfilterrow : true,
+							filterable : true,
 							pageable : true,
 							autoheight : true,
 							sortable : true,
 							altrows : true,
 							enabletooltips : true,
 							editable : false,
-
+							showtoolbar: true,
+							showstatusbar: true,
+							
 							columns : [ {
 								text : 'Student Code',
 								columngroup : 'studentCode',
 								datafield : 'studentCode',
-								width : 100,
-
+								//filtertype : 'input',
+								width : 120,
 							}, {
 								text : 'Student Name',
 								columngroup : 'studentName',
 								datafield : 'studentName',
 								cellsalign : 'right',
 								align : 'right',
-								width : 250
+
+								width : 150
 							}, {
 								text : 'Address',
 								columngroup : 'address',
@@ -189,76 +149,342 @@
 								align : 'right',
 								cellsalign : 'right',
 								cellsformat : 'c2',
-								width : 400
-							}, ],
+
+								width : 150
+							},{
+								text : 'Dob',
+								columngroup : 'dob',
+								datafield : 'dob',
+								cellsalign : 'right',
+								align : 'right',
+
+								width : 150
+							},{
+								text : 'Gender',
+								columngroup : 'gender',
+								datafield :'gender' ,
+								cellsalign : 'right',
+								align : 'right',
+								cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+				                      //var lastName = dataAdapter.records[row].lastname;
+				                      if( dataAdapter.records[row].gender)
+				                      return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + ';"> MALE </span>';
+				                      else return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + ';"> FEMALE </span>';
+				                  },
+								width : 100
+							}, 
+							{
+								text : 'ClassName',
+								columngroup : 'className',
+								datafield : 'className',
+								cellsalign : 'right',
+								align : 'right',
+
+								width : 150
+							},],
 
 						});
 						$("#addrowbutton").jqxButton();
 						$("#deleterowbutton").jqxButton();
 						$("#updaterowbutton").jqxButton();
-						$("#deleterowbutton").bind('click', function () {
-							var getselectedrowindexes = $('#grid').jqxGrid('getselectedrowindexes');
-			                if (getselectedrowindexes.length > 0)
-			                {
-			                    // returns the selected row's data.
-			                    var selectedRowData = $('#grid').jqxGrid('getrowdata', getselectedrowindexes[0]).uid;
-			                    if (confirm("Do you want to delete")) {
-			                    	$.ajax({
-				                        type: "POST",
-				                        url: '/index/delete',
-				                        data: {
-				                            lastrowkey: selectedRowData
-				                        },
-				                        success: function() {
-				                        	location.reload();
-				                        }
-				                    });
-				                    console.log(selectedRowData);
-			                    }
-			                    return false;
-			                    
-			                } 
-			                $("#addrowbutton").bind('click', function () {
-								var getselectedrowindexes = $('#grid').jqxGrid('getselectedrowindexes');
-				                if (getselectedrowindexes.length > 0)
-				                {
-				                    // returns the selected row's data.
-				                    var selectedRowData = $('#grid').jqxGrid('getrowdata', getselectedrowindexes[0]).uid;
-				                   
-				                    	$.ajax({
-					                        type: "POST",
-					                        url: '/index/add',
-					                        data: {
-					                            lastrowkey: selectedRowData
-					                        },
-					                        success: function() {
-					                        	location.reload();
-					                        }
-					                    });
-					                    console.log(selectedRowData);				                  
-				                    
-				                } 
-							
-				            
-				        });
+						$("#deleterowbutton")
+								.bind(
+										'click',
+										function() {
+
+											var getselectedrowindexes = $(
+													'#grid').jqxGrid(
+													'getselectedrowindexes');
+											if (getselectedrowindexes.length > 0) {
+												// returns the selected row's data.
+												var selectedRowData = $('#grid')
+														.jqxGrid(
+																'getrowdata',
+																getselectedrowindexes[0]).uid;
+											
+												if (confirm("Do you want to delete")) {
+													$
+															.ajax({
+																type : "POST",
+																url : '/index/delete',
+																data : {
+																	lastrowkey : selectedRowData
+																},
+																success : function() {
+																	location
+																			.reload();
+																}
+															});
+													console
+															.log(selectedRowData);
+												}
+												return false;
+												}
+												
+										});
+						$("#addrowbutton").bind('click', function() {
+							//editrow = row;
+							var offset = $("#grid").offset();
+							$("#popupWindow").jqxWindow({
+								position : {
+									x : parseInt(offset.left) + 60,
+									y : parseInt(offset.top) + 60
+								}
+							});
+							$("#popupWindow").jqxWindow('open');
+						});
+						// initialize the popup window and buttons.
+						$("#popupWindow").jqxWindow({
+							width : 250,
+							height : 200,
+							resizable : false,
+							isModal : true,
+							autoOpen : false,
+							cancelButton : $("#Cancel"),
+							modalOpacity : 0.01
+						});
+						$("#popupWindow").on('open', function() {
+							// $("#firstName").jqxInput('selectAll');
+						});
+
+						$("#Cancel").jqxButton({
+							theme : theme
+						});
+						$("#Save").jqxButton({
+							theme : theme
+						});
+						$("#Save")
+								.click(
+										function() {
+											var code = document
+													.getElementById('Code').value;
+											var name = document
+													.getElementById('Name').value;
+											var address = document
+													.getElementById('Address').value;
+											if (code.trim() != null && name.trim() != null
+													&& address.trim() != null
+													&& code.trim() != "" && name.trim() != ""
+													&& address.trim() != "") {
+												$.ajax({
+													type : "POST",
+													url : '/index/add',
+													data : {
+														code : code,
+														name : name,
+														address : address,
+													},
+													success : function() {
+														location.reload();
+													}
+												});
+											} else
+												$('#error').html("all field must be filled");
+										});
+						$("#updaterowbutton")
+								.bind(
+										'click',
+										function() {
+											var getselectedrowindexes = $(
+													'#grid').jqxGrid(
+													'getselectedrowindexes');
+											if (getselectedrowindexes.length > 0) {
+												// returns the selected row's data.
+												var selectedRowData = $('#grid')
+														.jqxGrid(
+																'getrowdata',
+																getselectedrowindexes[0]);
+												console.log(selectedRowData);
+												$("#CodeUpdate")
+														.val(
+																selectedRowData.studentCode);
+												$("#NameUpdate")
+														.val(
+																selectedRowData.studentName);
+												$("#AddressUpdate")
+														.val(
+																selectedRowData.address);
+												var offset = $("#grid")
+														.offset();
+												$("#popupWindowUpdate")
+														.jqxWindow(
+																{
+																	position : {
+																		x : parseInt(offset.left) + 60,
+																		y : parseInt(offset.top) + 60
+																	}
+																});
+												$("#popupWindowUpdate").jqxWindow(
+												'open');
+											}
+	
+											
+										});
+						$("#popupWindowUpdate").jqxWindow({
+							width : 250,
+							height :200,
+							resizable : false,
+							isModal : true,
+							autoOpen : false,
+							cancelButton : $("#CancelUpdate"),
+							modalOpacity : 0.01
+						});
+						$("#popupWindowUpdate").on('open', function() {
+							//$("#firstName").jqxInput('selectAll');
+						});
+						$("#CancelUpdate").jqxButton({
+							theme : theme
+						});
+						$("#SaveUpdate").jqxButton({
+							theme : theme
+						});
+						$("#SaveUpdate")
+								.click(
+										function() {
+											var getselectedrowindexes = $(
+													'#grid').jqxGrid(
+													'getselectedrowindexes');
+											var id;
+											if (getselectedrowindexes.length > 0) {
+												// returns the selected row's data.
+												id = $('#grid')
+														.jqxGrid(
+																'getrowdata',
+																getselectedrowindexes[0]).uid;
+											}
+											var code = document
+													.getElementById('CodeUpdate').value;
+											var name = document
+													.getElementById('NameUpdate').value;
+											var address = document
+													.getElementById('AddressUpdate').value;
+											console.log(code);
+											if (code.trim() != null && name.trim() != null
+													&& address.trim() != null
+													&& code.trim() != "" && name.trim() != ""
+													&& address.trim() != "") {
+												$.ajax({
+													type : "POST",
+													url : '/index/update',
+													data : {
+														id : id,
+														code : code,
+														name : name,
+														address : address,
+													},
+													success : function() {
+														location.reload();
+													}
+												});
+											} else
+												$('#errorupdate').html("all field must be filled");
+										});
+
+						$('#clearfilteringbutton').jqxButton({
+							height : 25
+						});
+						$('#clearfilteringbutton').click(function() {
+							$("#grid").jqxGrid('clearfilters');
+						});
+						  $("#jqxcalendar").jqxCalendar({ width: '250px', height: '250px' });
+				          $('#jqxcalendar').bind('valuechanged', function (event) {
+				              var date = event.args.date;
+				              $("#log").text(date.toDateString());
+				          });
 					});
 </script>
 </head>
 <body class='default'>
 
 
-	<div style="padding-top: 40px; margin: auto;">
-
-		<div>
-			<input id="addrowbutton" type="button" value="Add New Row" />
+	<div class="main">
+		<div style="display: flex">
+			<div style="margin-top: 10px;">
+				<input id="addrowbutton" type="button" value="Add New Row" />
+			</div>
+			<div style="margin-top: 10px; margin-left: 5px;">
+				<input id="deleterowbutton" type="button"
+					value="Delete Selected Row" />
+			</div>
+			<div style="margin-top: 10px; margin-left: 5px;">
+				<input id="updaterowbutton" type="button"
+					value="Update Selected Row" />
+			</div>
 		</div>
-		<div style="margin-top: 10px;">
-			<input id="deleterowbutton" type="button" value="Delete Selected Row" />
+		<div style="margin-top: 10px;" id="grid"></div>
+		<div id="popupWindow" >
+			<div>ADD</div>
+			<div style="overflow: hidden;">
+				<table>
+					
+					<tr>
+						<td align="right">Code:</td>
+						<td align="left"><input id="Code" /></td>
+					</tr>
+					<tr>
+						<td align="right">Name:</td>
+						<td align="left"><input id="Name" /></td>
+					</tr>
+					<tr>
+						<td align="right">Address:</td>
+						<td align="left"><input id="Address" /></td>
+					</tr>
+					<tr>
+						<td align="right">DOB:</td>
+						<td align="left"><div id='jqxcalendar'></div></td>
+					</tr>
+					<tr>
+						<td align="right">Gender:</td>
+						<td align="left"><input id="Gender" /></td>
+					</tr>
+					<tr>
+						<td align="right">Class:</td>
+						<td align="left"><input id="ClasName" /></td>
+					</tr>
+					
+					<tr>
+						<td align="right"></td>
+						<td style="padding-top: 10px;" align="right"><input
+							style="margin-right: 5px;" type="button" id="Save" value="Save" /><input
+							id="Cancel" type="button" value="Cancel" /></td>
+					</tr>
+				</table>
+				<div id="error" style = " color: #b00404; white-space: nowrap, margin-top:2px, margin-left:2px"></div>
+			</div>
 		</div>
-		<div style="margin-top: 10px;">
-			<input id="updaterowbutton" type="button" value="Update Selected Row" />
+		<input style="margin-top: 10px;" value="Remove Filter"
+			id="clearfilteringbutton" type="button" />
+		<div id="popupWindowUpdate">
+			<div>UPDATE</div>
+				
+			<div style="overflow: hidden;">
+				<table>
+					
+					<tr>
+						<td align="right">Code:</td>
+						<td align="left"><input id="CodeUpdate" /></td>
+					</tr>
+					<tr>
+						<td align="right">Name:</td>
+						<td align="left"><input id="NameUpdate" /></td>
+					</tr>
+					<tr>
+						<td align="right">Address:</td>
+						<td align="left"><input id="AddressUpdate" /></td>
+					</tr>
+					
+					<tr>
+					
+						<td align="right"></td>
+						<td style="padding-top: 10px;" align="right"><input
+							style="margin-right: 5px;" type="button" id="SaveUpdate"
+							value="Save" /><input id="CancelUpdate" type="button"
+							value="Cancel" /></td>
+					</tr>
+				</table>
+				<div id="errorupdate" style = " color: #b00404; white-space: nowrap, margin-top:2px, margin-left:2px"></div>
+			</div>
 		</div>
-		<div id="grid"></div>
 	</div>
 </body>
 </html>

@@ -36,11 +36,6 @@ public class MainRestFulController {
 	@Autowired
 	public StudentService studentService;
 
-//	@RequestMapping(method = RequestMethod.GET)
-//	public String grid(ModelMap model) {
-//		return "index";
-//	}
-
 	@RequestMapping(value = "/getStudents", method = RequestMethod.GET, //
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Student> getStudents(Model model) throws IOException {
@@ -56,4 +51,18 @@ public class MainRestFulController {
 		studentService.deleteStudent(Integer.parseInt(lastrowkey));
 	}
 
+	@RequestMapping(value = "/add", method = RequestMethod.POST, //
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public void addStudent(@RequestParam String code, @RequestParam String name, @RequestParam String address) throws IOException {
+			Student newStudent = new Student(code, name, address);
+			studentService.insertStudent(newStudent);
+	}
+	@RequestMapping(value = "/update", method = RequestMethod.POST, //
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public void updateStudent(@RequestParam String id, @RequestParam String code, @RequestParam String name, @RequestParam String address) throws IOException {
+			Student student = new Student( code, name, address);
+			System.out.println(code);
+			student.setStudentID(Integer.parseInt(id));
+			studentService.updateStudent(student);
+	}
 }

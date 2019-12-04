@@ -5,7 +5,7 @@
   
      
     <select id="selectAllStudent" resultMap="result">
-     	Select *	  from Students;
+     	SELECT s.ID, s.Code, s.Name, s.Address,s.dob, s.Gender,s.ClassID,c.ClassName from Students s left Join Class c on s.ClassID=c.ClassID;
     </select>
      <insert id="insertStudent" parameterType="Student" >
         INSERT INTO STUDENTS (Code, NAME, [Address]) VALUES (#{studentCode}, #{studentName}, #{address});
@@ -28,6 +28,10 @@
        <result property = "studentCode" column = "Code"/>
        <result property = "studentName" column = "Name"/>
        <result property = "address" column = "Address"/>
+       <result property = "dob" column = "dob"/>
+       <result property = "gender" column = "Gender"/>
+       <result property = "classID" column = "ClassID"/>
+       <result property = "className" column = "ClassName"/>
     </resultMap>
     
 </mapper>
